@@ -1,0 +1,45 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/Login.css">
+</head>
+<body>
+    <div class="left">
+        <div id="genshin__logo">
+            <img id="logga" src="./img/1200px-Genshin_Impact_logo.svg.png" alt=""> 
+        </div>
+
+        <div id="Login" class="m">
+          <div class="container">
+              <h1 id="logintxt">Login</h1>
+             <form action="/login" method="POST">
+                <input id="usern" type="text" placeholder="Username" name="usern" required>
+                <input id="psw" type="password" placeholder="Password" name="psw" required>
+                <button id="buttonLogin" type="submit">Login</button>
+             </form>
+          </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <div id="register">
+            <form class="modal-content" >
+                <div class="container-register"> 
+                    <h1>Register</h1>
+                    <input id="email" type="text" placeholder="Enter Email" name="email" required>
+                    <input id="email-repeat" type="email" placeholder="Repeat email" name="email-repeat" required>
+                    <input id="reg-user" type="username" placeholder="Username" name="username" required>
+                    <input id="reg-psw" type="password" placeholder="Enter Password" name="psw" required>
+                    <input id="repeat-reg-psw" type="password" placeholder="Repeat Password" name="psw-repeat" required>
+                    <button id="register-btn">Register</button>
+                </div>
+              </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

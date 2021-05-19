@@ -1,0 +1,28 @@
+body{
+    background-image: url("/img/homebackground.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.header{
+    text-align: center;
+    width: auto;
+    height: 20%;
+    overflow: hidden;
+    box-shadow: 2px 16px 23px rgba(0, 0, 0, 0.75);
+}
+#headerimg{
+    text-align: center;
+    width: 20%;
+}
+
+.characters{
+    width: 80%;
+    height: 70%;
+    margin: 10px;
+}
+
+
