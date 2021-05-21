@@ -3,6 +3,8 @@ const exp = require("express");
 const goose = require("mongoose");
 const method = require("method-override");
 const dotenv = require('dotenv');
+const session = require('express-session');
+
 // Loading .env file
 const result = dotenv.config();
 if(result.error) {
@@ -20,6 +22,12 @@ app.use(exp.urlencoded({extended:true}))
 app.use(exp.static("resources"))
 //säger att resources mappen finns / del av root
 app.use(method('_method'));
+
+app.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET,
+}));
 
 goose.connect(process.env.MONGODB_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true}).then(res => {
     console.log("[INFO] MongoDB successfully connected");
@@ -74,6 +82,7 @@ app.post('/register', (req, res) => {
             return;
         }
 
+        req.session.user = user;
         res.redirect('/home');
     });
 });
@@ -83,75 +92,34 @@ app.get("/login", (req, res)=> {
 })
 
 app.post("/login", (req,res)=>{
-    User.find({
-        usern: req.body.usern,
-        pass: req.body.psw
-    },(err, data)=>{
-        if(data.length!=0){
-        res.redirect("/home")
-        }else{
-            res.send(`We're no strangers to love
-            You know the rules and so do I
-            A full commitment's what I'm thinking of
-            You wouldn't get this from any other guy
-            I just wanna tell you how I'm feeling
-            Gotta make you understand
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye
-            Never gonna tell a lie and hurt you
-            We've known each other for so long
-            Your heart's been aching but you're too shy to say it
-            Inside we both know what's been going on
-            We know the game and we're gonna play it
-            And if you ask me how I'm feeling
-            Don't tell me you're too blind to see
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye
-            Never gonna tell a lie and hurt you
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye
-            Never gonna tell a lie and hurt you
-            Never gonna give, never gonna give
-            (Give you up)
-            We've known each other for so long
-            Your heart's been aching but you're too shy to say it
-            Inside we both know what's been going on
-            We know the game and we're gonna play it
-            I just wanna tell you how I'm feeling
-            Gotta make you understand
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye
-            Never gonna tell a lie and hurt you
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye
-            Never gonna tell a lie and hurt you
-            Never gonna give you up
-            Never gonna let you down
-            Never gonna run around and desert you
-            Never gonna make you cry
-            Never gonna say goodbye`)
+    const password = req.body.psw;
+    User.findOne({
+        username: req.body.usern,
+    }, (err, user) => {
+        if(err || !user || user.password !== password) {
+            return res.redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
         }
-    })
-})
+
+        req.session.user = user;
+        res.redirect('/home');
+    });
+});
+
+app.post('/logout', (req, res) => {
+    delete req.session.user;
+
+    res.redirect('/login');
+});
 
 app.get("/home", (req, res)=>{
+
+    if(!req.session.user) {
+        res.redirect('/login');
+        return;
+    }
+
     res.render("home")
-})
+});
 
 app.listen(3000, (err) =>{
     if(err){console.log(err)}
