@@ -2,6 +2,12 @@
 const exp = require("express");
 const goose = require("mongoose");
 const method = require("method-override");
+const dotenv = require('dotenv');
+// Loading .env file
+const result = dotenv.config();
+if(result.error) {
+    console.log("[WARNING] Dotenv file wasn't found or unable to load", err);
+}
 
 const app = exp();
 //gör express till en funktion
@@ -15,7 +21,12 @@ app.use(exp.static("resources"))
 //säger att resources mappen finns / del av root
 app.use(method('_method'));
 
-goose.connect("mongodb://localhost:27017/genshin", {useNewUrlParser:true, useUnifiedTopology:true});
+goose.connect(process.env.MONGODB_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true}).then(res => {
+    console.log("[INFO] MongoDB successfully connected");
+}).catch((err) => {
+    console.error("[ERROR] MongoDB failed to connect", err);
+});
+
 const Schema = new goose.Schema({
     usern: String,
     pass: String,
