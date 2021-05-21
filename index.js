@@ -28,8 +28,8 @@ goose.connect(process.env.MONGODB_CONNECTION_STRING, {useNewUrlParser:true, useU
 });
 
 const Schema = new goose.Schema({
-    usern: String,
-    pass: String,
+    username: String,
+    password: String,
     email: String
 })
 const User = goose.model("user", Schema)
@@ -44,7 +44,39 @@ app.get("/", (req, res)=>{
     // User.find({}, (err, data)=>{
      //   console.log(data);
      res.redirect("/login")
-})
+});
+
+app.post('/register', (req, res) => {
+    const email = req.body.email;
+    const emailRepeat = req.body['email-repeat'];
+    const username = req.body.username;
+    const password = req.body.psw;
+    const passwordRepeat = req.body['psw-repeat'];
+
+
+    if(email !== emailRepeat) {
+        res.render('login', {errors: ['Email not matching']});
+        return;
+    }
+
+    if(password !== passwordRepeat) {
+        res.render('login', {errors: ['Password not matching']});
+        return;
+    }
+
+    User.create({
+        username,
+        password,
+        email
+    }, (err, user) => {
+        if(err || !user) {
+            res.render('login', {errors: ['Unable to create user']});
+            return;
+        }
+
+        res.redirect('/home');
+    });
+});
 
 app.get("/login", (req, res)=> {
     res.render("login")

@@ -26,9 +26,17 @@
 
     <div class="right">
         <div id="register">
-            <form class="modal-content" >
+            
+            <form class="modal-content" action="/register" method="POST">
                 <div class="container-register"> 
                     <h1>Register</h1>
+                    <% if(typeof errors !== 'undefined') { %>
+                        <ul>
+                            <% for(let error of errors) { %>
+                                <li><%= error %></li>
+                            <% } %>
+                        </ul>
+                    <% } %>
                     <input id="email" type="text" placeholder="Enter Email" name="email" required>
                     <input id="email-repeat" type="email" placeholder="Repeat email" name="email-repeat" required>
                     <input id="reg-user" type="username" placeholder="Username" name="username" required>
