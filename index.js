@@ -23,12 +23,15 @@ app.use(exp.static("resources"))
 //säger att resources mappen finns / del av root
 app.use(method('_method'));
 
+//OBS after this I will mainly write comments in english following Florians advice
+
 app.use(session({
     resave: false,
     saveUninitialized: true,
     secret: process.env.SESSION_SECRET,
 }));
 
+//tells me if when i start up the server if it fails to connect or not
 goose.connect(process.env.MONGODB_CONNECTION_STRING, {useNewUrlParser:true, useUnifiedTopology:true}).then(res => {
     console.log("[INFO] MongoDB successfully connected");
 }).catch((err) => {
@@ -42,11 +45,13 @@ const Schema = new goose.Schema({
 })
 const User = goose.model("user", Schema)
 
+//test user
 // User.create({
 //     usern: "Dayeexz",
 //     pass: "12345",
 //     email: "taimalundqvits@gmail.com"
 // })
+
 
 app.get("/", (req, res)=>{
     // User.find({}, (err, data)=>{
@@ -54,6 +59,7 @@ app.get("/", (req, res)=>{
      res.redirect("/login")
 });
 
+//registration variables
 app.post('/register', (req, res) => {
     const email = req.body.email;
     const emailRepeat = req.body['email-repeat'];
@@ -61,7 +67,7 @@ app.post('/register', (req, res) => {
     const password = req.body.psw;
     const passwordRepeat = req.body['psw-repeat'];
 
-
+    //Compares the variable with the repeating one to see if it matches
     if(email !== emailRepeat) {
         res.render('login', {errors: ['Email not matching']});
         return;
@@ -72,6 +78,7 @@ app.post('/register', (req, res) => {
         return;
     }
 
+    //Creates a user and gives feedback incase of error
     User.create({
         username,
         password,
@@ -81,16 +88,18 @@ app.post('/register', (req, res) => {
             res.render('login', {errors: ['Unable to create user']});
             return;
         }
-
+        //once the user has succesfully registerd they are automatically logged in
         req.session.user = user;
         res.redirect('/home');
     });
 });
 
+//renders the login
 app.get("/login", (req, res)=> {
     res.render("login")
 })
 
+//if you enter the wrong password you get rickrolled (with ads cause youtube)
 app.post("/login", (req,res)=>{
     const password = req.body.psw;
     User.findOne({
@@ -99,12 +108,13 @@ app.post("/login", (req,res)=>{
         if(err || !user || user.password !== password) {
             return res.redirect('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
         }
-
+        //adds a session cookie to the user when they login and redirects them to home
         req.session.user = user;
         res.redirect('/home');
     });
 });
 
+//deletes the cookie and logs the user out,
 app.post('/logout', (req, res) => {
     delete req.session.user;
 
@@ -123,6 +133,6 @@ app.get("/home", (req, res)=>{
 
 app.listen(3000, (err) =>{
     if(err){console.log(err)}
-    else{console.log("connected)");}
+    else{console.log("connected");}
 })
 
